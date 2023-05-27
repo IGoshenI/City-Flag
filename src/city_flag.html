@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City-Flag</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f2f2f2;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        /* Main content styles */
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #map-container {
+            position: relative;
+            max-width: 800px;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            padding: 20px;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Add custom styling for interactive areas */
+        .area {
+            position: absolute;
+            border: 2px solid #fff;
+            background-color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+        }
+
+        /* Add hover effect for interactive areas */
+        .area:hover {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+            text-align: center;
+            position: sticky;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>City-Flag</h1>
+    </header>
+
+    <main>
+        <div id="map-container">
+            <img src="israel-map.jpg" alt="Country Map" usemap="#country-map">
+            <map name="country-map">
+                <area shape="poly" coords="x1,y1,x2,y2,x3,y3,..." href="#" alt="Area 1" class="area">
+                <area shape="poly" coords="x1,y1,x2,y2,x3,y3,..." href="#" alt="Area 2" class="area">
+                <!-- Add more areas as needed -->
+            </map>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2023 City-Flag. All rights reserved.
+    </footer>
+</body>
+</html>
