@@ -1,17 +1,13 @@
-use rocket::response::content;
-//use rocket::form::Form;
-//use rocket::FromForm;
-use rocket::fs::FileServer;
-use rocket::fs::NamedFile;
-
 #[macro_use] extern crate rocket;
+use rocket::{post, response::content, routes, serde::{Deserialize, Serialize, json::Json}, fs::{FileServer, NamedFile}};
 
-/*
-#[derive(FromForm)]
-struct LoginForm {
-    username: String,
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+#[serde(crate = "rocket::serde")]
+#[serde(rename_all = "camelCase")]
+struct AreaData {
+    area_name: String,
 }
-*/
 
 #[get("/")]
 fn city_flag_handler() -> content::RawHtml<String> {
@@ -27,18 +23,15 @@ async fn get_image() -> Option<NamedFile> {
     }
 }
 
-/* 
-#[post("/login", data = "<form>")]
-fn login_handler(form: Form<LoginForm>) -> content::RawHtml<String> {
-    let username = form.username.clone();
-    let response = format!("Hello {}!", username);
-    content::RawHtml(response)
+#[post("/api/endpoint", format = "json", data = "<data>")]
+fn endpoint(data: Json<AreaData>) -> content::RawHtml<String> {
+    println!("Received area name: {}", data.area_name);
+    content::RawHtml("working".to_string())
 }
-*/
 
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/", routes![city_flag_handler, get_image])
+        .mount("/", routes![city_flag_handler, get_image, endpoint])
         .mount("/static", FileServer::from(concat!(env!("CARGO_MANIFEST_DIR"), "/static")))
 }
