@@ -80,44 +80,75 @@
             position: sticky;
             bottom: 0;
         }
+
+        /* Message box styles */
+        #msg-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 2px solid #333;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+        }
+
+        /* Close button styles */
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
     </style>
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const areas = document.querySelectorAll(".area");
-        areas.forEach(function(area) {
-            area.addEventListener("click", function() {
-                const areaName = this.getAttribute("data-name");
-                fetch("/api/endpoint", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ areaName: areaName })
-                })
-                .then(response => {
-                    // Handle the response from the server
-                    if (response.ok) {
-                        return response.text();
-                    } else {
-                        throw new Error("Error: " + response.status);
-                    }
-                })
-                .then(data => {
-                    // Update the website based on the response
-                    console.log("POST request successful");
-                    console.log("Response from server:", data);
-                    // Modify the website elements as needed using JavaScript
-                    // For example, update the contents of a specific HTML element
-                    const resultElement = document.getElementById("result");
-                    resultElement.textContent = data;
-                })
-                .catch(error => {
-                    // Handle any errors
-                    console.error("Error sending POST request:", error);
+        document.addEventListener("DOMContentLoaded", function() {
+            const areas = document.querySelectorAll(".area");
+            const msgBox = document.getElementById("msg-box");
+            const closeButton = document.querySelector(".close-button"); // Use querySelector to select the close button
+
+            areas.forEach(function(area) {
+                area.addEventListener("click", function() {
+                    const areaName = this.getAttribute("data-name");
+                    fetch("/api/endpoint", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ areaName: areaName })
+                    })
+                    .then(response => {
+                        // Handle the response from the server
+                        if (response.ok) {
+                            return response.text();
+                        } else {
+                            throw new Error("Error: " + response.status);
+                        }
+                    })
+                    .then(data => {
+                        // Update the website based on the response
+                        console.log("POST request successful");
+                        console.log("Response from server:", data);
+                        // Modify the website elements as needed using JavaScript
+                        // For example, update the contents of a specific HTML element
+                        const resultElement = document.getElementById("msg-content");
+                        resultElement.textContent = data;
+                        // Show the message box
+                        msgBox.style.display = "block";
+                    })
+                    .catch(error => {
+                        // Handle any errors
+                        console.error("Error sending POST request:", error);
+                    });
                 });
             });
+
+            closeButton.addEventListener("click", function() {
+                msgBox.style.display = "none";
+            });
         });
-    });
     </script>
 </head>
 <body>
@@ -129,11 +160,14 @@
         <div id="map-container">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 505 920">
                 <image href="israel-map.jpg" width="505" height="920" />
-                <polygon class="area" points="199,333 214,337 229,329 224,302 214,294" data-name="Tel Aviv" />
+                <polygon class="area" points="200,331,214,334,219,327,227,329,224,319,218,317,222,308,224,298,219,294,213,295" data-name="Tel Aviv" />
                 <!-- Add more areas as needed -->
             </svg>
         </div>
-        <div id="result"></div> <!-- Add this line to display the response -->
+        <div id="msg-box">
+            <span class="close-button">&times;</span>
+            <p id="msg-content"></p>
+        </div>        
     </main>
 
     <footer>
