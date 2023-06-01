@@ -1,5 +1,5 @@
 #[macro_use] extern crate rocket;
-use rocket::{post, response::content, routes, serde::{Deserialize, Serialize, json::Json}, fs::{FileServer, NamedFile}};
+use rocket::{post, response::content, routes, serde::{Deserialize, Serialize, json::Json}, fs::{FileServer, NamedFile}, State};
 
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -7,6 +7,11 @@ use rocket::{post, response::content, routes, serde::{Deserialize, Serialize, js
 #[serde(rename_all = "camelCase")]
 struct AreaData {
     area_name: String,
+}
+
+struct Status{
+    current_area: String,
+    current_flag: String
 }
 
 #[get("/")]
@@ -24,14 +29,21 @@ async fn get_image() -> Option<NamedFile> {
 }
 
 #[post("/api/endpoint", format = "json", data = "<data>")]
-fn endpoint(data: Json<AreaData>) -> content::RawHtml<String> {
+fn endpoint(data: Json<AreaData>, state: &State<Status>) -> content::RawHtml<String> {
     println!("Received area name: {}", data.area_name);
-    content::RawHtml("working".to_string())
+    if data.area_name == state.current_area{
+        content::RawHtml("working".to_string())
+    }
+    else{
+        content::RawHtml("not this area!".to_string())
+    }
 }
 
 #[launch]
 fn rocket() -> _ {
+    let status = Status{current_area: "Tel Aviv".to_string(), current_flag: "static/Tel-Aviv-Flag.jpg".to_string()};
     rocket::build()
         .mount("/", routes![city_flag_handler, get_image, endpoint])
         .mount("/static", FileServer::from(concat!(env!("CARGO_MANIFEST_DIR"), "/static")))
+        .manage(status)
 }
